@@ -1030,6 +1030,7 @@
     <module>molgenis-data-cache</module>
     <module>molgenis-data-csv</module>
     <module>molgenis-data-elasticsearch</module>
+    <module>molgenis-data-event-sourcing</module>
     <module>molgenis-data-excel</module>
     <module>molgenis-data-file</module>
     <module>molgenis-data-i18n</module>

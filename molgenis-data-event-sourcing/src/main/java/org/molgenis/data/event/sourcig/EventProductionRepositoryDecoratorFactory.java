@@ -1,4 +1,4 @@
-package org.molgenis.data.event.sourcing;
+package org.molgenis.data.event.sourcig;
 
 import java.util.Map;
 import org.molgenis.data.Repository;

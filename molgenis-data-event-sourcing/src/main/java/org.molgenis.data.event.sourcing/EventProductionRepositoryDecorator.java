@@ -39,7 +39,7 @@ public class EventProductionRepositoryDecorator extends AbstractRepositoryDecora
 
   @Override
   public void deleteById(Object id) {
-    LOG.info("deleting entity by id:'{}' of type '{}'", id);
+    LOG.info("deleting entity by id:'{}' ", id);
     super.deleteById(id);
   }
 
@@ -58,7 +58,7 @@ public class EventProductionRepositoryDecorator extends AbstractRepositoryDecora
   @Override
   public void update(Stream<Entity> entities) {
     LOG.info("update stream of entities");
-    update(entities);
+    super.update(entities);
   }
 
   @Override

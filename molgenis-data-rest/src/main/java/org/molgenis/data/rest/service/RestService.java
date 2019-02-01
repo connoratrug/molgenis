@@ -9,8 +9,8 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.molgenis.data.EntityManager.CreationMode.POPULATE;
-import static org.molgenis.data.file.model.FileMetaMetaData.FILENAME;
-import static org.molgenis.data.file.model.FileMetaMetaData.FILE_META;
+import static org.molgenis.data.file.model.FileMetaMetadata.FILENAME;
+import static org.molgenis.data.file.model.FileMetaMetadata.FILE_META;
 import static org.molgenis.data.meta.AttributeType.ONE_TO_MANY;
 import static org.molgenis.data.util.MolgenisDateFormat.FAILED_TO_PARSE_ATTRIBUTE_AS_DATETIME_MESSAGE;
 import static org.molgenis.data.util.MolgenisDateFormat.FAILED_TO_PARSE_ATTRIBUTE_AS_DATE_MESSAGE;
@@ -111,7 +111,7 @@ public class RestService {
    */
   public Object toEntityValue(Attribute attr, Object paramValue, Object id) {
     // Treat empty strings as null
-    if (paramValue != null && (paramValue instanceof String) && ((String) paramValue).isEmpty()) {
+    if ((paramValue instanceof String) && ((String) paramValue).isEmpty()) {
       paramValue = null;
     }
 
@@ -465,16 +465,13 @@ public class RestService {
         .forEach(
             mappedByAttr -> {
               AttributeType type = mappedByAttr.getDataType();
-              switch (type) {
-                case ONE_TO_MANY:
-                  updateMappedByEntitiesOneToMany(entity, existingEntity, mappedByAttr);
-                  break;
-                default:
-                  throw new RuntimeException(
-                      format(
-                          "Attribute [%s] of type [%s] can't be mapped by another attribute",
-                          mappedByAttr.getName(), type.toString()));
+              if (type != ONE_TO_MANY) {
+                throw new RuntimeException(
+                    format(
+                        "Attribute [%s] of type [%s] can't be mapped by another attribute",
+                        mappedByAttr.getName(), type.toString()));
               }
+              updateMappedByEntitiesOneToMany(entity, existingEntity, mappedByAttr);
             });
   }
 

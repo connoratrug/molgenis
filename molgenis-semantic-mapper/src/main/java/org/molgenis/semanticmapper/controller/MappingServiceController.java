@@ -277,7 +277,8 @@ public class MappingServiceController extends PluginController {
     Iterable<Entity> sourceEntities = () -> dataService.findAll(sourceEntityName, query).iterator();
 
     long total = dataService.count(sourceEntityName, new QueryImpl<>());
-    long nrSuccess = 0, nrErrors = 0;
+    long nrSuccess = 0;
+    long nrErrors = 0;
 
     Map<String, String> errorMessages = new LinkedHashMap<>();
     for (AlgorithmEvaluation evaluation :
@@ -556,7 +557,7 @@ public class MappingServiceController extends PluginController {
   @GetMapping("/isNewEntity")
   @ResponseBody
   public boolean isNewEntity(@RequestParam String targetEntityTypeId) {
-    return dataService.getEntityType(targetEntityTypeId) == null;
+    return !dataService.hasEntityType(targetEntityTypeId);
   }
 
   /**
@@ -687,8 +688,8 @@ public class MappingServiceController extends PluginController {
       attributeMapping = entityMapping.addAttributeMapping(targetAttribute);
     }
 
-    EntityType refEntityType = attributeMapping.getTargetAttribute().getRefEntity();
-    if (refEntityType != null) {
+    if (attributeMapping.getTargetAttribute().hasRefEntity()) {
+      EntityType refEntityType = attributeMapping.getTargetAttribute().getRefEntity();
       Iterable<Entity> refEntities = () -> dataService.findAll(refEntityType.getId()).iterator();
       model.addAttribute("categories", refEntities);
     }
@@ -977,7 +978,9 @@ public class MappingServiceController extends PluginController {
   @ResponseBody
   public Map<String, Object> testScript(@RequestBody MappingServiceRequest mappingServiceRequest) {
     EntityType targetEntityType =
-        dataService.getEntityType(mappingServiceRequest.getTargetEntityName());
+        dataService.hasEntityType(mappingServiceRequest.getTargetEntityName())
+            ? dataService.getEntityType(mappingServiceRequest.getTargetEntityName())
+            : null;
     Attribute targetAttribute =
         targetEntityType != null
             ? targetEntityType.getAttribute(mappingServiceRequest.getTargetAttributeName())

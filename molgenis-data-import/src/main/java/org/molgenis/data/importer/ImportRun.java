@@ -1,18 +1,19 @@
 package org.molgenis.data.importer;
 
-import static org.molgenis.data.importer.ImportRunMetaData.ENDDATE;
-import static org.molgenis.data.importer.ImportRunMetaData.ID;
-import static org.molgenis.data.importer.ImportRunMetaData.IMPORTEDENTITIES;
-import static org.molgenis.data.importer.ImportRunMetaData.MESSAGE;
-import static org.molgenis.data.importer.ImportRunMetaData.NOTIFY;
-import static org.molgenis.data.importer.ImportRunMetaData.PROGRESS;
-import static org.molgenis.data.importer.ImportRunMetaData.STARTDATE;
-import static org.molgenis.data.importer.ImportRunMetaData.STATUS;
-import static org.molgenis.data.importer.ImportRunMetaData.USERNAME;
+import static org.molgenis.data.importer.ImportRunMetadata.ENDDATE;
+import static org.molgenis.data.importer.ImportRunMetadata.ID;
+import static org.molgenis.data.importer.ImportRunMetadata.IMPORTEDENTITIES;
+import static org.molgenis.data.importer.ImportRunMetadata.MESSAGE;
+import static org.molgenis.data.importer.ImportRunMetadata.NOTIFY;
+import static org.molgenis.data.importer.ImportRunMetadata.PROGRESS;
+import static org.molgenis.data.importer.ImportRunMetadata.STARTDATE;
+import static org.molgenis.data.importer.ImportRunMetadata.STATUS;
+import static org.molgenis.data.importer.ImportRunMetadata.USERNAME;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 import org.molgenis.data.Entity;
@@ -64,10 +65,8 @@ public class ImportRun extends StaticEntity {
     set(STARTDATE, startDate);
   }
 
-  @Nullable
-  @CheckForNull
-  public Instant getEndDate() {
-    return getInstant(ENDDATE);
+  public Optional<Instant> getEndDate() {
+    return Optional.ofNullable(getInstant(ENDDATE));
   }
 
   public void setEndDate(Instant endDate) {

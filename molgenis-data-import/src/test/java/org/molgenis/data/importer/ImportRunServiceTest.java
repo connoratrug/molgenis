@@ -5,12 +5,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.molgenis.data.importer.ImportRunMetaData.IMPORT_RUN;
+import static org.molgenis.data.importer.ImportRunMetadata.IMPORT_RUN;
 import static org.molgenis.data.importer.ImportStatus.FAILED;
 import static org.testng.Assert.assertEquals;
 
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.Optional;
 import org.mockito.Mock;
 import org.molgenis.data.DataService;
 import org.molgenis.data.security.user.UserService;
@@ -44,14 +45,15 @@ public class ImportRunServiceTest extends AbstractMockitoTest {
     Instant startDate = Instant.parse("2016-02-13T12:34:56.217Z");
     when(importRun.getStartDate()).thenReturn(startDate);
     Instant endDate = Instant.parse("2016-02-13T12:35:12.231Z");
-    when(importRun.getEndDate()).thenReturn(endDate);
+    when(importRun.getEndDate()).thenReturn(Optional.of(endDate));
 
     String mailText =
         importRunService.createEnglishMailText(importRun, ZoneId.of("Europe/Amsterdam"));
     assertEquals(
         mailText,
-        "The import started by you on Saturday, February 13, 2016 1:34:56 PM CET "
-            + "finished on 1:35:12 PM with status: FAILED\nMessage:\nEntity already exists.");
+        "The import started by you on Saturday, February 13, 2016 at 1:34:56 PM Central European Standard Time finished on 1:35:12 PM with status: FAILED\n"
+            + "Message:\n"
+            + "Entity already exists.");
   }
 
   @Test

@@ -192,7 +192,7 @@
         <configuration>
           <skip>${skipITs}</skip>
           <container>
-            <containerId>tomcat8x</containerId>
+            <containerId>tomcat9x</containerId>
             <zipUrlInstaller>
               <url>
                 http://repo1.maven.org/maven2/org/apache/tomcat/tomcat/${tomcat.version}/tomcat-${tomcat.version}.zip
@@ -370,6 +370,13 @@
       <groupId>io.rest-assured</groupId>
       <artifactId>rest-assured</artifactId>
       <scope>test</scope>
+      <exclusions>
+        <!-- unused, causes Java 11 issues -->
+        <exclusion>
+          <groupId>io.rest-assured</groupId>
+          <artifactId>xml-path</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.jayway.jsonpath</groupId>

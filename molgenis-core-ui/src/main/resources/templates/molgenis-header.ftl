@@ -16,16 +16,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="icon" href="<@resource_href "/img/favicon.ico"/>" type="image/x-icon">
 
+    <#-- Include browser polyfills before any script tags are inserted -->
+    <@polyfill/>
     <#if !version?? || version == 1>
         <link rel="stylesheet" href="<@resource_href "/css/bootstrap.min.css"/>" type="text/css">
         <link rel="stylesheet" href="<@theme_href "/css/bootstrap-3/${app_settings.bootstrapTheme?html}"/>" type="text/css" id="bootstrap-theme">
         <link rel="stylesheet" href="<@resource_href "/css/molgenis.css"/>" type="text/css">
         <#if app_settings.logoTopHref?has_content><link rel="stylesheet" href="<@resource_href "/css/molgenis-top-logo.css"/>" type="text/css"></#if>
-
-        <#if app_settings.cssHref?has_content><link rel="stylesheet" href="<@resource_href "/css/${app_settings.cssHref?html}"/>" type="text/css"></#if>
-
-        <#-- Include browser polyfills before any script tags are inserted -->
-        <@polyfill/>
 
         <#-- Bundle of third party JavaScript resources used by MOLGENIS: see minify-maven-plugin in molgenis-core-ui/pom.xml for bundle contents -->
         <script src="<@resource_href "/js/dist/molgenis-vendor-bundle.js"/>"></script>
@@ -74,7 +71,14 @@
 
         <#-- Include the JS bundle for bootstrap 4 which includes popper.js -->
         <script type="text/javascript" src="<@resource_href "/js/bootstrap-4/bootstrap.bundle.min.js"/>"></script>
+
+        <#-- Include molgenis-menu css -->
+        <link rel="stylesheet" href="<@resource_href "/js/menu/context.css"/>" type="text/css">
+
     </#if>
+
+    <#-- Load css specified via settigns -->
+    <#if app_settings.cssHref?has_content><link rel="stylesheet" href="<@resource_href "/css/${app_settings.cssHref?html}"/>" type="text/css"></#if>
 
     <#-- Load css specified by plugins -->
     <#list css as css_file_name>
@@ -98,8 +102,6 @@
         <#assign menu=gson.toJson(menu)>
 
         <#-- VUE -->
-        <div id="molgenis-menu"></div>
-
         <script type="text/javascript">
             window.molgenisMenu = {
                 menu: ${menu}
@@ -111,10 +113,14 @@
                 , loginHref: '/login'
                 , helpLink: {label: 'Help', href: 'https://molgenis.gitbooks.io/molgenis/content/'}
             }
+
+            window.cookieWall = ${cookieWall?c}
         </script>
 
         <#-- Include the Vue version of the molgenis menu  -->
-        <script type=text/javascript src="<@resource_href "/js/bootstrap-4/menu/molgenis-menu.js"/>"></script>
+        <div id="molgenis-site-menu"></div>
+
+        <script type=text/javascript src="<@resource_href "/js/menu/context.umd.js"/>"></script>
     </#if>
 
 <#-- Start application content -->
@@ -186,7 +192,7 @@
                 <#list menu.items as item>
                     <#if !item.isMenu() && item.label == "Home" && app_settings.logoNavBarHref?has_content>
                         <a class="navbar-brand" href="/menu/${menu.id?html}/${item.url?html}">
-                            <img class="img-responsive" style="max-width:100%;max-height:100%;"
+                            <img class="img-responsive molgenis-navbar-logo" style="height:2em;font-size:16px;"
                                  src="${app_settings.logoNavBarHref?html}"
                                  alt="${app_settings.title?html}">
                         </a>

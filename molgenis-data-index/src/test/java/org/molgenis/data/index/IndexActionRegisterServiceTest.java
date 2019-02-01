@@ -8,9 +8,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
-import static org.molgenis.data.index.meta.IndexActionGroupMetaData.INDEX_ACTION_GROUP;
-import static org.molgenis.data.index.meta.IndexActionMetaData.INDEX_ACTION;
-import static org.molgenis.data.index.meta.IndexActionMetaData.IndexStatus.PENDING;
+import static org.molgenis.data.index.meta.IndexActionGroupMetadata.INDEX_ACTION_GROUP;
+import static org.molgenis.data.index.meta.IndexActionMetadata.INDEX_ACTION;
+import static org.molgenis.data.index.meta.IndexActionMetadata.IndexStatus.PENDING;
 import static org.molgenis.data.meta.model.AttributeMetadata.ATTRIBUTE_META_DATA;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -32,7 +32,7 @@ import org.molgenis.data.index.meta.IndexActionGroup;
 import org.molgenis.data.index.meta.IndexActionGroupFactory;
 import org.molgenis.data.meta.model.AttributeMetadata;
 import org.molgenis.data.meta.model.EntityType;
-import org.molgenis.data.transaction.TransactionManager;
+import org.molgenis.data.transaction.TransactionConstants;
 import org.molgenis.test.AbstractMockitoTest;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.testng.annotations.AfterMethod;
@@ -51,7 +51,7 @@ public class IndexActionRegisterServiceTest extends AbstractMockitoTest {
   @BeforeMethod
   public void beforeMethod() {
     TransactionSynchronizationManager.bindResource(
-        TransactionManager.TRANSACTION_ID_RESOURCE_NAME, "1");
+        TransactionConstants.TRANSACTION_ID_RESOURCE_NAME, "1");
     indexActionRegisterServiceImpl =
         new IndexActionRegisterServiceImpl(
             dataService, indexActionFactory, indexActionGroupFactory, new IndexingStrategy());
@@ -60,7 +60,7 @@ public class IndexActionRegisterServiceTest extends AbstractMockitoTest {
   @AfterMethod
   public void afterMethod() {
     TransactionSynchronizationManager.unbindResource(
-        TransactionManager.TRANSACTION_ID_RESOURCE_NAME);
+        TransactionConstants.TRANSACTION_ID_RESOURCE_NAME);
   }
 
   @SuppressWarnings("unchecked")

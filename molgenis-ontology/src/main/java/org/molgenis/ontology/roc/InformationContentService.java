@@ -1,8 +1,8 @@
 package org.molgenis.ontology.roc;
 
 import static java.util.Objects.requireNonNull;
-import static org.molgenis.ontology.core.meta.OntologyMetaData.ONTOLOGY;
-import static org.molgenis.ontology.core.meta.OntologyTermMetaData.ONTOLOGY_TERM;
+import static org.molgenis.ontology.core.meta.OntologyMetadata.ONTOLOGY;
+import static org.molgenis.ontology.core.meta.OntologyTermMetadata.ONTOLOGY_TERM;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -24,8 +24,8 @@ import org.molgenis.data.Entity;
 import org.molgenis.data.QueryRule;
 import org.molgenis.data.QueryRule.Operator;
 import org.molgenis.data.support.QueryImpl;
-import org.molgenis.ontology.core.meta.OntologyMetaData;
-import org.molgenis.ontology.core.meta.OntologyTermMetaData;
+import org.molgenis.ontology.core.meta.OntologyMetadata;
+import org.molgenis.ontology.core.meta.OntologyTermMetadata;
 import org.molgenis.semanticsearch.string.NGramDistanceAlgorithm;
 import org.molgenis.semanticsearch.string.Stemmer;
 
@@ -33,7 +33,7 @@ public class InformationContentService {
   private static final String NON_WORD_SEPARATOR = "[^a-zA-Z0-9]";
   private static final String SINGLE_WHITESPACE = " ";
 
-  private final LoadingCache<String, Long> CACHED_TOTAL_WORD_COUNT =
+  private final LoadingCache<String, Long> cachedTotalWordCount =
       CacheBuilder.newBuilder()
           .maximumSize(Integer.MAX_VALUE)
           .expireAfterWrite(1, TimeUnit.DAYS)
@@ -44,16 +44,16 @@ public class InformationContentService {
                   Entity ontologyEntity =
                       dataService.findOne(
                           ONTOLOGY,
-                          new QueryImpl<>().eq(OntologyMetaData.ONTOLOGY_IRI, ontologyIri));
+                          new QueryImpl<>().eq(OntologyMetadata.ONTOLOGY_IRI, ontologyIri));
                   if (ontologyEntity != null) {
                     return dataService.count(
                         ONTOLOGY_TERM,
-                        new QueryImpl<>().eq(OntologyTermMetaData.ONTOLOGY, ontologyEntity));
+                        new QueryImpl<>().eq(OntologyTermMetadata.ONTOLOGY, ontologyEntity));
                   }
                   return (long) 0;
                 }
               });
-  private final LoadingCache<OntologyWord, Double> CACHED_INVERSE_DOCUMENT_FREQ =
+  private final LoadingCache<OntologyWord, Double> cachedInverseDocumentFreq =
       CacheBuilder.newBuilder()
           .maximumSize(Integer.MAX_VALUE)
           .expireAfterWrite(1, TimeUnit.DAYS)
@@ -64,13 +64,13 @@ public class InformationContentService {
                   Entity ontologyEntity =
                       dataService.findOne(
                           ONTOLOGY,
-                          new QueryImpl<>().eq(OntologyMetaData.ONTOLOGY_IRI, ontologyIri));
+                          new QueryImpl<>().eq(OntologyMetadata.ONTOLOGY_IRI, ontologyIri));
                   if (ontologyEntity != null) {
                     QueryRule queryRule =
                         new QueryRule(
                             Arrays.asList(
                                 new QueryRule(
-                                    OntologyTermMetaData.ONTOLOGY_TERM_SYNONYM,
+                                    OntologyTermMetadata.ONTOLOGY_TERM_SYNONYM,
                                     Operator.FUZZY_MATCH,
                                     key.getWord())));
                     queryRule.setOperator(Operator.DIS_MAX);
@@ -78,11 +78,11 @@ public class InformationContentService {
                         new QueryRule(
                             Arrays.asList(
                                 new QueryRule(
-                                    OntologyTermMetaData.ONTOLOGY, Operator.EQUALS, ontologyEntity),
+                                    OntologyTermMetadata.ONTOLOGY, Operator.EQUALS, ontologyEntity),
                                 new QueryRule(Operator.AND),
                                 queryRule));
                     long wordCount = dataService.count(ONTOLOGY_TERM, new QueryImpl<>(finalQuery));
-                    Long total = CACHED_TOTAL_WORD_COUNT.get(ontologyIri);
+                    Long total = cachedTotalWordCount.get(ontologyIri);
                     BigDecimal idfValue =
                         BigDecimal.valueOf(
                             total == null ? 0 : (1 + Math.log((double) total / (wordCount + 1))));
@@ -145,7 +145,7 @@ public class InformationContentService {
             word -> {
               Double wordIDF = null;
               try {
-                wordIDF = CACHED_INVERSE_DOCUMENT_FREQ.get(new OntologyWord(ontologyIri, word));
+                wordIDF = cachedInverseDocumentFreq.get(new OntologyWord(ontologyIri, word));
               } catch (ExecutionException e) {
                 throw new UncheckedExecutionException(e);
               }

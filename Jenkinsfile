@@ -1,12 +1,12 @@
 pipeline {
     agent {
         kubernetes {
-            label 'molgenis'
+            label 'molgenis-jdk11'
         }
     }
     environment {
         LOCAL_REPOSITORY = "${LOCAL_REGISTRY}/molgenis/molgenis-app"
-        CHART_VERSION = '0.9.1'
+        CHART_VERSION = '0.12.0'
     }
     stages {
         stage('Retrieve build secrets') {
@@ -93,7 +93,7 @@ pipeline {
                     steps {
                         milestone(ordinal: 100, label: 'deploy to master.dev.molgenis.org')
                         container('rancher') {
-                            sh "rancher context switch development"
+                            sh "rancher context switch dev-molgenis"
                             sh "rancher apps upgrade --set molgenis.image.tag=${TAG} master ${CHART_VERSION}"
                         }
                     }
@@ -107,7 +107,7 @@ pipeline {
             }
             agent {
                 kubernetes {
-                    label('molgenis-it')
+                    label('molgenis-it-jdk11')
                 }
             }
             stages {
@@ -151,7 +151,7 @@ pipeline {
                             unstash 'rancher-config'
                         }
                         container('rancher') {
-                            sh "rancher context switch test"
+                            sh "rancher context switch test-molgenis"
                             sh "rancher apps upgrade --set molgenis.image.tag=${TAG} latest ${CHART_VERSION}"
                         }
                     }

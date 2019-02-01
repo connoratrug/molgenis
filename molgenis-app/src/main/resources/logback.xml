@@ -23,4 +23,5 @@
     <appender-ref ref="Sentry" />
   </logger>
   <logger name="org.molgenis.i18n.properties.AllPropertiesMessageSource" level="ERROR"/>
+  <logger name=" org.molgenis.core.ui.style.BootstrapThemePopulator" level="DEBUG"/>
 </configuration>

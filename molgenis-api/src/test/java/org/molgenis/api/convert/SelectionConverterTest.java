@@ -20,6 +20,10 @@ class SelectionConverterTest {
   @Test
   void testConvert() {
     assertEquals(new Selection(singletonMap("item", null)), selectionConverter.convert("item"));
+    assertEquals(new Selection(singletonMap("it-em", null)), selectionConverter.convert("it-em"));
+    assertEquals(new Selection(singletonMap("it_em", null)), selectionConverter.convert("it_em"));
+    assertEquals(new Selection(singletonMap("it#em", null)), selectionConverter.convert("it#em"));
+    assertEquals(new Selection(singletonMap("it#em", null)), selectionConverter.convert("it#em"));
   }
 
   @Test

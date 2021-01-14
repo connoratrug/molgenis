@@ -208,6 +208,8 @@ public abstract class MolgenisWebAppSecurityConfig extends WebSecurityConfigurer
         .permitAll()
         .antMatchers("/theme/style.css")
         .permitAll()
+        .antMatchers("/dynamic/**")
+        .permitAll()
         .antMatchers("/api/**")
         .permitAll()
         .antMatchers("/webjars/**")
